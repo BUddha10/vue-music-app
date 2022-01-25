@@ -1,4 +1,4 @@
-import { createStore } from 'vuex';
+import { createStore } from "vuex";
 
 export default createStore({
   state: {
@@ -8,5 +8,8 @@ export default createStore({
     toggleAuthModal: (state) => {
       state.authModelShow = !state.authModelShow;
     },
+  },
+  getters: {
+    authModelShow: (state) => state.authModelShow,
   },
 });
