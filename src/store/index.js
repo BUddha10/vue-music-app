@@ -10,6 +10,6 @@ export default createStore({
     },
   },
   getters: {
-    authModelShow: (state) => state.authModelShow,
+    // authModelShow: (state) => state.authModelShow,
   },
 });

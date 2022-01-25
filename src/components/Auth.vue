@@ -25,15 +25,27 @@
           <!-- Tabs -->
           <ul class="flex flex-wrap mb-4">
             <li class="flex-auto text-center">
-              <a class="block rounded py-3 px-4 transition hover:text-white text-white bg-blue-600" href="#">Login</a>
+              <a
+                class="block rounded py-3 px-4 transition"
+                href="#"
+                @click.prevent="tab = 'login'"
+                :class="{ 'hover:text-white text-white bg-blue-600': tab === 'login', 'hover:text-blue-600': tab === 'register' }"
+                >Login</a
+              >
             </li>
             <li class="flex-auto text-center">
-              <a class="block rounded py-3 px-4 transition" href="#">Register</a>
+              <a
+                class="block rounded py-3 px-4 transition"
+                href="#"
+                @click="tab = 'register'"
+                :class="{ 'hover:text-white text-white bg-blue-600': tab === 'register', 'hover:text-blue-600': tab === 'login' }"
+                >Register</a
+              >
             </li>
           </ul>
 
           <!-- Login Form -->
-          <form>
+          <form v-show="tab === 'login'">
             <!-- Email -->
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
@@ -55,7 +67,7 @@
             <button type="submit" class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700">Submit</button>
           </form>
           <!-- Registration Form -->
-          <form>
+          <form v-show="tab === 'register'">
             <!-- Name -->
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
@@ -120,17 +132,20 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "Auth",
+  data() {
+    return {
+      tab: "login",
+    };
+  },
   methods: {
     ...mapMutations(["toggleAuthModal"]),
   },
   computed: {
-    authModelShow() {
-      return this.$store.getters.authModelShow;
-    },
+    ...mapState(["authModelShow"]),
   },
 };
 </script>
