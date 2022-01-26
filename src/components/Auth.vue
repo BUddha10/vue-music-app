@@ -67,6 +67,9 @@
             <button type="submit" class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700">Submit</button>
           </form>
           <!-- Registration Form -->
+          <div class="text-white text-center font-bold p-5 mb-4" v-if="reg_show_alert" :class="reg_alert_variant">
+            {{ reg_alert_msg }}
+          </div>
           <vee-form v-show="tab === 'register'" :validation-schema="schema" @submit="register">
             <!-- Name -->
             <div class="mb-3">
@@ -142,7 +145,7 @@
               <label class="inline-block">Accept terms of service</label>
               <ErrorMessage class="text-red-600 block" name="tos" />
             </div>
-            <button type="submit" class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700">Submit</button>
+            <button type="submit" :disabled="reg_in_submission" class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700">Submit</button>
           </vee-form>
         </div>
       </div>
@@ -167,12 +170,23 @@ export default {
         country: "required",
         tos: "required",
       },
+      reg_in_submission: false,
+      reg_show_alert: false,
+      reg_alert_variant: "bg-blue-600",
+      reg_alert_msg: "Please wait! Your account is being created",
     };
   },
   methods: {
     ...mapMutations(["toggleAuthModal"]),
-    register(value) {
-      console.log(value);
+    register(values) {
+      this.reg_show_alert = true;
+      this.reg_in_submission = true;
+      this.reg_alert_variant = "bg-blue-500";
+      this.reg_alert_msg = "Please wait! your account is being created";
+
+      this.reg_alert_variant = "bg-green-500";
+      this.reg_alert_msg = "success your account is created";
+      console.log(values);
     },
   },
   computed: {
