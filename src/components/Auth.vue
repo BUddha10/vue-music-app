@@ -163,7 +163,7 @@ export default {
         email: "required|min:3|max:25|email",
         age: "required|minVal:18|maxVal:100",
         password: "required|min:3|max:30",
-        confirm_password: "confirmed:@password",
+        confirm_password: "password_mismatch:@password",
         country: "required",
         tos: "required",
       },
