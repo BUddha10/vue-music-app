@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 
 import VeeValidationPlugin from "./includes/validation";
+import "./includes/firebase";
 
 import "./assets/tailwind.css";
 import "./assets/main.css";
