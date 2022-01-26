@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import { auth, createUserWithEmailAndPassword, db, collection, addDoc } from "@/includes/firebase";
+
 export default {
   name: "RegisterForm",
   data() {
@@ -105,15 +107,44 @@ export default {
     };
   },
   methods: {
-    register(values) {
+    async register(val) {
       this.reg_show_alert = true;
       this.reg_in_submission = true;
       this.reg_alert_variant = "bg-blue-500";
       this.reg_alert_msg = "Please wait! your account is being created";
 
+      let userCred = null;
+      try {
+        userCred = await createUserWithEmailAndPassword(auth, val.email, val.password);
+      } catch (error) {
+        console.log(error);
+        this.reg_in_submission = false;
+        this.reg_alert_variant = "bg-red-500";
+        this.reg_alert_msg = "Unexpected error occured! Please try againa later";
+        return;
+      }
+
+      const userData = {
+        name: val.name,
+        email: val.email,
+        age: val.age,
+        country: val.country,
+      };
+
+      try {
+        await addDoc(collection(db, "users"), userData);
+      } catch (error) {
+        console.log(error);
+        this.reg_in_submission = false;
+        this.reg_alert_variant = "bg-red-500";
+        this.reg_alert_msg = "Unexpected error occured! Please try againa later";
+        return;
+      }
+
       this.reg_alert_variant = "bg-green-500";
       this.reg_alert_msg = "success your account is created";
-      console.log(values);
+
+      console.log(userCred);
     },
   },
 };

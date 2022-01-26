@@ -1,5 +1,6 @@
-import firebase from "firebase/app";
-import "firebase/auth"; // for authentication
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore/lite";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -11,5 +12,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-export default firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+export { app, auth, createUserWithEmailAndPassword, db, collection, getDocs, addDoc };
