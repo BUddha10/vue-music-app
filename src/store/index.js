@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, doc, setDoc } from "@/includes/firebase";
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, db, doc, setDoc } from "@/includes/firebase";
 
 export default createStore({
   state: {
@@ -19,6 +19,7 @@ export default createStore({
   },
 
   actions: {
+    // register user
     async register({ commit }, payload) {
       const userCred = await createUserWithEmailAndPassword(auth, payload.email, payload.password);
 
@@ -40,6 +41,7 @@ export default createStore({
       commit("toggleAuth");
     },
 
+    // user login
     async logInUser({ commit }, payload) {
       const user = await signInWithEmailAndPassword(auth, payload.email, payload.password);
       console.log(user);
@@ -52,6 +54,13 @@ export default createStore({
       if (user) {
         commit("toggleAuth");
       }
+    },
+
+    // user logOut
+    async logOut({ commit }) {
+      await signOut(auth);
+
+      commit("toggleAuth");
     },
   },
 });

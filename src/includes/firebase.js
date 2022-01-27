@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "firebase/firestore/lite";
 
 // Your web app's Firebase configuration
@@ -16,4 +16,4 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 //  eslint-disable max-len
-export { app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, collection, getDocs, addDoc, doc, setDoc, onAuthStateChanged }; // eslint-disable-line
+export { app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, db, collection, getDocs, addDoc, doc, setDoc, onAuthStateChanged }; // eslint-disable-line
