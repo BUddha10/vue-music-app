@@ -131,6 +131,7 @@ export default {
         country: val.country,
       };
 
+      // adding users into the database
       try {
         await addDoc(collection(db, "users"), userData);
       } catch (error) {
@@ -141,6 +142,7 @@ export default {
         return;
       }
 
+      this.$store.commit("toggleAuth");
       this.reg_alert_variant = "bg-green-500";
       this.reg_alert_msg = "success your account is created";
 
