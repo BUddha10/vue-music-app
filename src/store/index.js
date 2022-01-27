@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import { auth, createUserWithEmailAndPassword, db, doc, setDoc } from "@/includes/firebase";
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, doc, setDoc } from "@/includes/firebase";
 
 export default createStore({
   state: {
@@ -39,6 +39,13 @@ export default createStore({
 
       commit("toggleAuth");
     },
+
+    async logInUser({ commit }, payload) {
+      const user = await signInWithEmailAndPassword(auth, payload.email, payload.password);
+      console.log(user);
+      commit("toggleAuth");
+    },
+
     init_login({ commit }) {
       const user = auth.currentUser;
 

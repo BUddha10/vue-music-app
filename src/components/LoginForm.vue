@@ -47,13 +47,24 @@ export default {
     };
   },
   methods: {
-    login(values) {
-      console.log(values);
+    async login(values) {
       this.login_in_submission = true;
       this.login_show_alert = true;
       this.login_alert_variant = "bg-blue-500";
       this.login_alert_msg = "Please wait! we are loggin you in.";
 
+      // login user
+      try {
+        await this.$store.dispatch("logInUser", values);
+      } catch (error) {
+        console.log(error);
+        this.reg_in_submission = false;
+        this.login_alert_variant = "bg-red-500";
+        this.login_alert_msg = "Invalid login info";
+        return;
+      }
+
+      // login success message
       this.login_alert_variant = "bg-green-500";
       this.login_alert_msg = "Success! You are now logged in.";
     },
