@@ -6,15 +6,17 @@ import Manage from "@/views/Manage.vue";
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "home", // assign name to route
     component: Home,
   },
   {
     path: "/about",
+    name: "about",
     component: About,
   },
   {
     path: "/manage",
+    name: "manage",
     component: Manage,
   },
 ];
