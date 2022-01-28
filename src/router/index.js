@@ -21,6 +21,7 @@ const routes = [
   },
   {
     path: "/manage",
+    // alias: "manage", // alternate to redirect
     redirect: { name: "manage" }, // /manage redirect to /manage-music path
   },
   {
