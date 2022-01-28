@@ -1,5 +1,6 @@
 <template>
   <!-- eslint-disable max-len -->
+  <!-- eslint-disable-line -->
   <div class="bg-white rounded border border-gray-200 relative flex flex-col">
     <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
       <span class="card-title">Upload</span>
@@ -9,6 +10,14 @@
       <!-- Upload Dropbox -->
       <div
         class="w-full px-10 py-20 rounded text-center cursor-pointer border border-dashed border-gray-400 text-gray-400 transition duration-500 hover:text-white hover:bg-green-400 hover:border-green-400 hover:border-solid"
+        :class="{ 'bg-green-400 border-green-400 border-solid': is_dragOver }"
+        @drag.prevent.stop=""
+        @dropstart.prevent.stop=""
+        @dragend.prevent.stop="is_dragOver = false"
+        @dragover.prevent.stop="is_dragOver = true"
+        @dragenter.prevent.stop="is_dragOver = true"
+        @dragleave.prevent.stop="is_dragOver = false"
+        @drop.prevent.stop="upload"
       >
         <h5>Drop your files here</h5>
       </div>
@@ -41,5 +50,15 @@
 <script>
 export default {
   name: "Upload",
+  data() {
+    return {
+      is_dragOver: false,
+    };
+  },
+  methods: {
+    upload() {
+      this.is_dragOver = false;
+    },
+  },
 };
 </script>
