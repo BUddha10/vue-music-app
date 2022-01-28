@@ -23,6 +23,10 @@ const routes = [
     path: "/manage",
     redirect: { name: "manage" }, // /manage redirect to /manage-music path
   },
+  {
+    path: "/:catchAll(.*)*", // catch unknown path
+    redirect: { name: "home" }, // redirect unknown path to home path
+  },
 ];
 
 const router = createRouter({
