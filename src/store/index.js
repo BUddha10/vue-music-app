@@ -34,9 +34,6 @@ export default createStore({
       });
 
       userCred.user.displayName = payload.name;
-      // await userCred.user.updateProfile({
-      //   displayName: payload.name,
-      // });
 
       commit("toggleAuth");
     },
