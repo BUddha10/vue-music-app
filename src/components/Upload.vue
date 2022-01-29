@@ -21,6 +21,7 @@
       >
         <h5>Drop your files here</h5>
       </div>
+      <input type="file" multiple @change="upload($event)" />
       <hr class="my-6" />
       <!-- Progess Bars -->
       <div class="mb-4" v-for="uploadFile in uploadFiles" :key="uploadFile.name">
@@ -52,7 +53,7 @@ export default {
     upload($event) {
       this.is_dragOver = false;
 
-      const files = [...$event.dataTransfer.files]; // converting object into arrayish
+      const files = $event.dataTransfer ? [...$event.dataTransfer.files] : [...$event.target.files]; // converting object into arrayish
       console.log(files);
       files.forEach((file) => {
         if (file.type !== "audio/mpeg") {
@@ -100,16 +101,8 @@ export default {
 
             console.log(song.url);
 
-            // upload songs
-
+            // upload song
             await addDoc(collection(db, "songs"), { ...song });
-
-            // Add a new document with a generated id.
-            // const docRef = await addDoc(collection(db, "cities"), {
-            //   name: "Tokyo",
-            //   country: "Japan",
-            // });
-            // console.log("Document written with ID: ", docRef.id);
 
             this.uploadFiles[uploadIndex].variant = "bg-green-400";
             this.uploadFiles[uploadIndex].icon = "fa fa-check";
