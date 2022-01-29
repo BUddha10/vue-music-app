@@ -112,6 +112,17 @@ export default {
         );
       });
     },
+    cancleUpload(){
+      this.uploadFiles.forEach((upload) => {
+      upload.uploadTask.cancel();
+    });
+    }
+  },
+
+  beforeUnmount() {
+    this.uploadFiles.forEach((upload) => {
+      upload.uploadTask.cancel();
+    });
   },
 };
 </script>
