@@ -1,7 +1,8 @@
+// eslint-disable-line
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "firebase/firestore/lite";
-
+import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD6lTKKubDeRck-_-sYJrP0oQzj997NBTA",
@@ -15,5 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 //  eslint-disable max-len
-export { app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, db, collection, getDocs, addDoc, doc, setDoc, onAuthStateChanged }; // eslint-disable-line
+export { app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, db, storage, collection, getDocs, addDoc, doc, setDoc, onAuthStateChanged }; // eslint-disable-line

@@ -12,12 +12,12 @@
         class="w-full px-10 py-20 rounded text-center cursor-pointer border border-dashed border-gray-400 text-gray-400 transition duration-500 hover:text-white hover:bg-green-400 hover:border-green-400 hover:border-solid"
         :class="{ 'bg-green-400 border-green-400 border-solid': is_dragOver }"
         @drag.prevent.stop=""
-        @dropstart.prevent.stop=""
+        @dragstart.prevent.stop=""
         @dragend.prevent.stop="is_dragOver = false"
         @dragover.prevent.stop="is_dragOver = true"
         @dragenter.prevent.stop="is_dragOver = true"
         @dragleave.prevent.stop="is_dragOver = false"
-        @drop.prevent.stop="upload"
+        @drop.prevent.stop="upload($event)"
       >
         <h5>Drop your files here</h5>
       </div>
@@ -48,6 +48,9 @@
 </template>
 
 <script>
+import { storage } from "@/includes/firebase";
+import { ref, uploadBytes } from "firebase/storage";
+
 export default {
   name: "Upload",
   data() {
@@ -56,8 +59,20 @@ export default {
     };
   },
   methods: {
-    upload() {
+    upload($event) {
       this.is_dragOver = false;
+
+      const files = [...$event.dataTransfer.files]; // converting object into arrayish
+      console.log(files);
+      files.forEach((file) => {
+        if (file.type !== "audio/mpeg") {
+          console.log("file do not match");
+          return;
+        }
+
+        const childRef = ref(storage, `songs/${file.name}`);
+        uploadBytes(childRef, file);
+      });
     },
   },
 };
