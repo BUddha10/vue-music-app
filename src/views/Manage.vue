@@ -13,7 +13,7 @@
           </div>
           <div class="p-6">
             <!-- Composition Items -->
-            <app-composition-item :song="songList" />
+            <app-composition-item v-for="song in songList" :key="song.docID" :song="song" />
           </div>
         </div>
       </div>
@@ -44,13 +44,11 @@ export default {
       const q = query(collection(db, "songs"), where("uid", "==", auth.currentUser.uid));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
         const song = {
           ...doc.data(),
           docID: doc.id,
         };
         this.songList.push(song);
-        console.log(song);
       });
     } catch (error) {
       console.log(error);
