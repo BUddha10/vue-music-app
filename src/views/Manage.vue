@@ -98,12 +98,34 @@
 </template>
 
 <script>
+/*eslint-disable*/
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "@/includes/firebase";
 import AppUpload from "@/components/Upload.vue";
 
 export default {
   name: "manage",
+  data() {
+    return {
+      songList: [],
+    };
+  },
   components: {
     AppUpload,
+  },
+  async created() {
+    try {
+      const q = query(collection(db, "songs"), where("uid", "==", auth.currentUser.uid));
+      const querySnapshot = await getDocs(q);
+      console.log("your songs list is");
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        this.songList.push({ ...doc.data() });
+        console.log(doc.id, " => ", doc.data());
+      });
+    } catch (error) {
+      console.log(error);
+    }
   },
   // beforeRouteLeave(to, from, next) {
   //   this.$refs.upload.cancleUpload();

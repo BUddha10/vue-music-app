@@ -1,7 +1,7 @@
 // eslint-disable-line
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "firebase/firestore/lite";
+import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
