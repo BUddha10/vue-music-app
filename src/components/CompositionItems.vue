@@ -11,7 +11,8 @@
       </button>
     </div>
     <div v-show="showForm">
-      <vee-form :validation-schema="schema" :initial-values="song">
+      <div class="text-white text-center font-bold p-4 mb-4" v-if="show_alert" :class="alert_variant">{{ alert_message }}</div>
+      <vee-form :validation-schema="schema" :initial-values="song" @submit="editSong">
         <div class="mb-3">
           <label class="inline-block mb-2">Song Title</label>
           <vee-field
@@ -32,19 +33,30 @@
           />
           <ErrorMessage class="text-red-600" name="genre" />
         </div>
-        <button type="submit" class="py-1.5 px-3 mr-2 rounded text-white bg-green-600" @click.prevent="editSong">Submit</button>
-        <button type="button" class="py-1.5 px-3 rounded text-white bg-gray-600" @click.prevent="showForm = !showForm">Go Back</button>
+        <button type="submit" class="py-1.5 px-3 mr-2 rounded text-white bg-green-600" :disabled="in_submission">Submit</button>
+        <button type="button" class="py-1.5 px-3 rounded text-white bg-gray-600" :disabled="in_submission" @click.prevent="showForm = false">Go Back</button>
       </vee-form>
     </div>
   </div>
 </template>
 
 <script>
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/includes/firebase";
+
 export default {
   name: "CompositionItems",
   props: {
     song: {
       type: Object,
+      required: true,
+    },
+    updateSong: {
+      type: Function,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     },
   },
@@ -55,11 +67,32 @@ export default {
         modified_name: "required",
         genre: "alpha_spaces",
       },
+      in_submission: false,
+      show_alert: false,
+      alert_variant: "bg-blue-500",
+      alert_message: "Please wait! Updading song info",
     };
   },
   methods: {
-    editSong() {
-      console.log("edit success");
+    async editSong(value) {
+      this.in_submission = true;
+      this.show_alert = true;
+      this.alert_variant = "bg-blue-500";
+      this.alert_message = "Please wait! Updading song info";
+
+      try {
+        const songRef = doc(db, "songs", this.song.docID);
+        await updateDoc(songRef, { ...value });
+      } catch (error) {
+        this.in_submission = false;
+        this.alert_variant = "bg-red-500";
+        this.alert_message = "Something went wrong! Please try again later.";
+        return;
+      }
+      this.updateSong(this.index, value);
+      this.in_submission = false;
+      this.alert_variant = "bg-green-500";
+      this.alert_message = "Update Success";
     },
   },
 };
