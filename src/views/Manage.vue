@@ -13,7 +13,7 @@
           </div>
           <div class="p-6">
             <!-- Composition Items -->
-            <app-composition-item />
+            <app-composition-item :song="songList" />
           </div>
         </div>
       </div>

@@ -38,5 +38,11 @@
 <script>
 export default {
   name: "CompositionItems",
+  props: {
+    song: {
+      type: Object,
+      required: true,
+    },
+  },
 };
 </script>
