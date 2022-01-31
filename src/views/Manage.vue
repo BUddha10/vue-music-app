@@ -13,7 +13,15 @@
           </div>
           <div class="p-6">
             <!-- Composition Items -->
-            <app-composition-item v-for="(song, i) in songList" :key="song.docID" :song="song" :updateSong="updateSong" :index="i" :removeSong="removeSong" />
+            <app-composition-item
+              v-for="(song, i) in songList"
+              :key="song.docID"
+              :song="song"
+              :updateSong="updateSong"
+              :index="i"
+              :removeSong="removeSong"
+              :updateUnsavedFlag="updateUnsavedFlag"
+            />
           </div>
         </div>
       </div>
@@ -33,6 +41,7 @@ export default {
   data() {
     return {
       songList: [],
+      UnsavedFlag: false,
     };
   },
   components: {
@@ -65,6 +74,17 @@ export default {
     addSong(song) {
       this.songList.push(song);
     },
+    updateUnsavedFlag(value) {
+      this.unsavedFlag = value;
+    },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.unsavedFlag) {
+      next();
+    } else {
+      const leave = confirm("You have unsaved changes. Are you sure you want to leave?");
+      next(leave);
+    }
   },
   // beforeRouteLeave(to, from, next) {
   //   this.$refs.upload.cancleUpload();
