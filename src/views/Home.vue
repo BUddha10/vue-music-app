@@ -34,8 +34,9 @@
 </template>
 
 <script>
+/*eslint-disable*/
 import AppSongItem from "@/components/SongItem.vue";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, limit, startAfter, orderBy } from "firebase/firestore";
 import { db } from "@/includes/firebase";
 
 export default {
@@ -43,20 +44,62 @@ export default {
   data() {
     return {
       songs: [],
+      maxPerPage: 10,
+      pendingRequest: false,
     };
   },
   components: {
     AppSongItem,
   },
   async created() {
-    const querySnapshot = await getDocs(collection(db, "songs"));
-    querySnapshot.forEach((doc) => {
-      this.songs.push({
-        docID: doc.id,
-        ...doc.data(),
+    this.getSongs();
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+  methods: {
+    handleScroll() {
+      const { scrollTop, offsetHeight } = document.documentElement;
+      const { innerHeight } = window;
+      const bottomOfWindow = Math.round(scrollTop) + innerHeight === offsetHeight;
+
+      if (bottomOfWindow) {
+        // console.log(bottomOfWindow)
+        this.getSongs();
+      }
+    },
+    async getSongs() {
+      if (this.pendingRequest) {
+        return;
+      }
+
+      this.pendingRequest = true;
+      let querySnapshot;
+      // check if arrya contains any songs
+      if (this.songs.length) {
+        const songsArray = JSON.parse(JSON.stringify(this.songs));
+        const lastSongId = songsArray[songsArray.length - 1].docID;
+        const docRef = doc(db, "songs", lastSongId);
+        const lastSong = await getDoc(docRef);
+
+        // const querySnapshot = await getDocs(collection(db, "songs"));
+        querySnapshot = await getDocs(query(collection(db, "songs"), orderBy("modified_name"), startAfter(lastSong), limit(this.maxPerPage)));
+      } else {
+        // const querySnapshot = await getDocs(collection(db, "songs"));
+        querySnapshot = await getDocs(query(collection(db, "songs"), orderBy("modified_name"), limit(this.maxPerPage)));
+      }
+
+      querySnapshot.forEach((doc) => {
+        this.songs.push({
+          docID: doc.id,
+          ...doc.data(),
+        });
       });
-    });
-    // console.log(this.songs);
+      // console.log(this.songs);
+
+      this.pendingRequest = false;
+    },
   },
 };
 </script>
