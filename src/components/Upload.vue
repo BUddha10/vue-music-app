@@ -43,6 +43,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export default {
   name: "Upload",
+  props: ["addSong"],
   data() {
     return {
       is_dragOver: false,
@@ -54,7 +55,7 @@ export default {
       this.is_dragOver = false;
 
       const files = $event.dataTransfer ? [...$event.dataTransfer.files] : [...$event.target.files]; // converting object into arrayish
-      console.log(files);
+
       files.forEach((file) => {
         if (file.type !== "audio/mpeg") {
           console.log("file do not match");
@@ -78,7 +79,7 @@ export default {
           "state_changed",
           (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(`Upload is ${progress}% done`);
+            // console.log(`Upload is ${progress}% done`);
             this.uploadFiles[uploadIndex].current_progress = progress;
           },
           (error) => {
@@ -99,24 +100,30 @@ export default {
 
             song.url = await getDownloadURL(uploadTask.snapshot.ref);
 
-            console.log(song.url);
-
             // upload song
-            await addDoc(collection(db, "songs"), { ...song });
+            const songSnapshot = await addDoc(collection(db, "songs"), { ...song });
+            // console.log(songSnapshot.id);
+            // console.log({ ...song });
+
+            const newSong = {
+              ...song,
+              docId: songSnapshot.id,
+            };
+
+            this.addSong(newSong);
 
             this.uploadFiles[uploadIndex].variant = "bg-green-400";
             this.uploadFiles[uploadIndex].icon = "fa fa-check";
             this.uploadFiles[uploadIndex].text_class = "text-green-400";
-            console.log("success");
           }
         );
       });
     },
-    cancleUpload(){
+    cancleUpload() {
       this.uploadFiles.forEach((upload) => {
-      upload.uploadTask.cancel();
-    });
-    }
+        upload.uploadTask.cancel();
+      });
+    },
   },
 
   beforeUnmount() {
