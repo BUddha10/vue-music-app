@@ -25,13 +25,19 @@
         <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
       </div>
       <div class="p-6">
-        <form>
-          <textarea
+        <div class="text-white text-center font-bold p-5 mb-4" v-if="comment_show_alert" :class="comment_alert_variant">
+          {{ comment_alert_message }}
+        </div>
+        <vee-form :validation-schema="schema" @submit="addComment" v-if="userLoggedIn">
+          <vee-field
+            as="textarea"
+            name="comment"
             class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded mb-4"
             placeholder="Your comment here..."
-          ></textarea>
-          <button type="submit" class="py-1.5 px-3 rounded text-white bg-green-600 block">Submit</button>
-        </form>
+          ></vee-field>
+          <ErrorMessage class="text-red-600" name="comment" />
+          <button type="submit" class="py-1.5 px-3 rounded text-white bg-green-600 block" :disabled="comment_in_submission">Submit</button>
+        </vee-form>
         <!-- Sort Comments -->
         <select class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded">
           <option value="1">Latest</option>
@@ -101,14 +107,26 @@
 
 <script>
 /*eslint-disable*/
+import { auth, db, collection, addDoc } from "@/includes/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/includes/firebase";
+import { mapState } from "vuex";
+
 export default {
   name: "Song",
   data() {
     return {
       song: {},
+      schema: {
+        comment: "required|min:3",
+      },
+      comment_in_submission: false,
+      comment_show_alert: false,
+      comment_alert_variant: "bg-blue-500",
+      comment_alert_message: "Please wait! Your comment is being submitted",
     };
+  },
+  computed: {
+    ...mapState(["userLoggedIn"]),
   },
   async created() {
     const songId = this.$route.params.id;
@@ -120,6 +138,36 @@ export default {
       return;
     }
     this.song = songSnap.data();
+  },
+  methods: {
+    async addComment(values, { resetForm }) {
+      // console.log(values);
+      this.comment_in_submission = true;
+      this.comment_show_alert = true;
+      this.comment_alert_variant = "bg-blue-500";
+      this.comment_alert_message = "Please wait! Your comment is being submitted";
+
+      // create comment object
+      const comment = {
+        content: values.comment,
+        datePosted: new Date().toString(),
+        sid: this.$route.params.id,
+        name: auth.currentUser.displayName,
+        uid: auth.currentUser.uid,
+      };
+
+      // uplod comment
+      const commentRef = await addDoc(collection(db, "comments"), { ...comment });
+      // console.log("Document written with ID: ", commentRef.id);
+
+      // show the success message
+      this.comment_in_submission = false;
+      this.comment_alert_variant = "bg-green-500";
+      this.comment_alert_message = "Comment added";
+
+      // make input field empty after submittion
+      resetForm();
+    },
   },
 };
 </script>
