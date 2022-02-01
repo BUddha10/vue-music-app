@@ -107,8 +107,8 @@
 
 <script>
 /*eslint-disable*/
+import { doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { auth, db, collection, addDoc } from "@/includes/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { mapState } from "vuex";
 
 export default {
@@ -116,6 +116,7 @@ export default {
   data() {
     return {
       song: {},
+      songComments: [],
       schema: {
         comment: "required|min:3",
       },
@@ -130,14 +131,22 @@ export default {
   },
   async created() {
     const songId = this.$route.params.id;
+
+    // create songReference
     const songRef = doc(db, "songs", songId);
+    // get song from api
     const songSnap = await getDoc(songRef);
 
+    // redirect to home if song doesn't exist
     if (!songSnap.exists()) {
       this.$router.push({ name: "home" });
       return;
     }
+    // assign result data
     this.song = songSnap.data();
+
+    // fetch the comments of song
+    this.getComment(songId);
   },
   methods: {
     async addComment(values, { resetForm }) {
@@ -167,6 +176,23 @@ export default {
 
       // make input field empty after submittion
       resetForm();
+    },
+    async getComment(songId) {
+      try {
+        // create query
+        const q = query(collection(db, "comments"), where("sid", "==", songId));
+        // execute query
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          const comment = {
+            ...doc.data(),
+            docID: doc.id,
+          };
+          this.songComments.push(comment);
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };
