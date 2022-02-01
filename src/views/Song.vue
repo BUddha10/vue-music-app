@@ -39,7 +39,7 @@
           <button type="submit" class="py-1.5 px-3 rounded text-white bg-green-600 block" :disabled="comment_in_submission">Submit</button>
         </vee-form>
         <!-- Sort Comments -->
-        <select class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded">
+        <select v-model="sort" class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded">
           <option value="1">Latest</option>
           <option value="2">Oldest</option>
         </select>
@@ -48,7 +48,7 @@
   </section>
   <!-- Comments -->
   <ul class="container mx-auto">
-    <li class="p-6 bg-gray-50 border border-gray-200" v-for="comment in songComments" :key="comment.docID">
+    <li class="p-6 bg-gray-50 border border-gray-200" v-for="comment in sortedComment" :key="comment.docID">
       <!-- Comment Author -->
       <div class="mb-5">
         <div class="font-bold">{{ comment.name }}</div>
@@ -72,6 +72,7 @@ export default {
     return {
       song: {},
       songComments: [],
+      sort: "1",
       schema: {
         comment: "required|min:3",
       },
@@ -83,6 +84,14 @@ export default {
   },
   computed: {
     ...mapState(["userLoggedIn"]),
+    sortedComment() {
+      return this.songComments.slice().sort((a, b) => {
+        if (this.sort === "1") {
+          return new Date(b.datePosted) - new Date(a.datePosted);
+        }
+        return new Date(a.datePosted) - new Date(b.datePosted);
+      });
+    },
   },
   async created() {
     const songId = this.$route.params.id;
