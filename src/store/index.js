@@ -24,8 +24,16 @@ export default createStore({
       });
     },
   },
+
+  // getters are equivalent to computed properties
   getters: {
     // authModelShow: (state) => state.authModelShow,
+    playing: (state) => {
+      if (state.sound.playing) {
+        return state.sound.playing();
+      }
+      return false;
+    },
   },
 
   actions: {
@@ -74,6 +82,18 @@ export default createStore({
       console.log(payload.url);
       commit("playSong", payload);
       state.sound.play();
+    },
+
+    async toggleAudio({ state }) {
+      if (!state.sound.playing) {
+        return;
+      }
+
+      if (state.sound.playing()) {
+        state.sound.pause();
+      } else {
+        state.sound.play();
+      }
     },
   },
 });
